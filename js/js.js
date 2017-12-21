@@ -1,14 +1,18 @@
 (function($) {
-  var state = {
-    level: 0,
-    step: 0
-  }
 
-  var lastState = state;
+  function createState() {
+    return {
+      level: 0,
+      step: 0
+    }
+  }
+  var state = createState()
+
+  var lastState = createState()
 
   function updateOne() {
     // Move the cactus around randomly.
-    if (state.step % 30 === 0) {
+    if (state.step % 50 === 0) {
       var newY = Math.floor(Math.random() * (window.innerHeight * .8)) + 1;
       var newX = Math.floor(Math.random() * (window.innerWidth * .8)) + 1;
       $('#cactus').css({
@@ -16,6 +20,43 @@
         top: newY
       });
     }
+  }
+
+  function updateTwo() {
+    // The train should drive around.
+    var $train = $('#train')
+    $train.show()
+    var direction = 0
+    var mod = state.step % 200
+    if (mod < 100) {
+      direction = 1;
+    }
+    var text = '🚃🚂'
+    if (direction) {
+      text = '🚂🚃'
+    }
+    $train.text(text)
+    var css = {
+      right: 'auto'
+    }
+    prop = 'left'
+    if (direction) {
+      prop = 'right'
+      css['left'] = 'auto';
+    }
+    css[prop] = (mod % 100) * 0.9 + '%'
+    $train.css(css)
+  }
+
+  function updateHeading() {
+    var text = '';
+    switch (state.level) {
+      case 1:
+        text = 'Få toget til å ta en "choo choo" pause 3 ganger'
+        break;
+
+    }
+    $('#instructions').text(text)
   }
 
   function update() {
@@ -30,13 +71,18 @@
         break
 
       case 1:
+        updateTwo()
         break;
     }
-    lastState = state;
+    lastState = _.clone(state)
     window.requestAnimationFrame(update)
   }
 
   $(document).ready(function() {
     window.requestAnimationFrame(update)
+    $('#cactus').click(function() {
+      $(this).hide()
+      state.level++
+    })
   })
 })(jQuery);
