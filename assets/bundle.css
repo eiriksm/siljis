@@ -1,0 +1,11 @@
+#app {
+  font-size: 30px;
+}
+#cactus {
+  position: absolute;
+  top: 20px;
+}
+#train {
+  display: none;
+  position: absolute;
+}
