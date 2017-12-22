@@ -12069,7 +12069,9 @@ module.exports = updateOne
 var $ = __webpack_require__(0)
 
 function updateStart (state) {
-  if (!(new Date().getTime() > 1545616800000) && !state.override) {
+  if (!(new Date().getTime() > 1514080800000) && !state.override) {
+    $('.warning').show()
+    $('#start').hide()
     return
   }
   $('.warning').hide()
