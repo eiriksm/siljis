@@ -9,7 +9,7 @@ function createState () {
     stop: false,
     tries: 0,
     choos: 0,
-    override: !new RegExp(/silje/).test(window.location.href)
+    override: !new RegExp(/silje/).test(window.location.href) || new RegExp(/666/).test(window.location.href)
   }
 }
 window.cheat = function () {
