@@ -1,90 +1,148 @@
-  'use strict';
+'use strict'
 var $ = require('jquery')
 var _ = require('underscore')
 require('../css/css.css')
-function createState() {
+function createState () {
   return {
-    level: 0,
-    step: 0
+    level: -1,
+    step: 0,
+    stop: false,
+    tries: 0,
+    choos: 0,
+    override: !new RegExp(/silje/).test(window.location.href)
   }
+}
+window.cheat = function () {
+  state.level++
 }
 var state = createState()
 
 var lastState = createState()
 
-function updateOne() {
-  // Move the cactus around randomly.
-  if (state.step % 50 === 0) {
-    var newY = Math.floor(Math.random() * (window.innerHeight * .8)) + 1;
-    var newX = Math.floor(Math.random() * (window.innerWidth * .8)) + 1;
-    $('#cactus').css({
-      left: newX,
-      top: newY
-    });
-  }
-}
+const updateOne = require('./levels/1')
+const updateStart = require('./levels/start')
+const updateThree = require('./levels/3')
+const updateTwo = require('./levels/2')
+const updateFour = require('./levels/4')
 
-function updateTwo() {
-  // The train should drive around.
-  var $train = $('#train')
-  $train.show()
-  var direction = 0
-  var mod = state.step % 200
-  if (mod < 100) {
-    direction = 1;
-  }
-  var text = '🚃🚂'
-  if (direction) {
-    text = '🚂🚃'
-  }
-  $train.text(text)
-  var css = {
-    right: 'auto'
-  }
-  var prop = 'left'
-  if (direction) {
-    prop = 'right'
-    css['left'] = 'auto';
-  }
-  css[prop] = (mod % 100) * 0.9 + '%'
-  $train.css(css)
-}
-
-function updateHeading() {
-  var text = '';
+function updateHeading () {
+  var text = ''
   switch (state.level) {
+    case 0:
+      text = 'Gi en kaktus kos!'
+      break
+
     case 1:
       text = 'Få toget til å ta en "choo choo" pause 3 ganger'
-      break;
+      break
 
+    case 2:
+      text = 'Gjett det hemmelige passordet'
+      break
+
+    case 3:
+      text = 'Finn den riktige knappen'
+      break
   }
   $('#instructions').text(text)
 }
 
-function update() {
-  state.step++;
+function update () {
+  state.step++
   // Check if we should update level description.
-  if (state.level != lastState.level) {
-    updateHeading();
+  if (state.level !== lastState.level) {
+    updateHeading()
   }
   switch (state.level) {
+    case -1:
+      updateStart(state)
+      break
     case 0:
-      updateOne();
+      updateOne(state)
       break
 
     case 1:
-      updateTwo()
-      break;
+      updateTwo(state)
+      break
+
+    case 2:
+      updateThree()
+      break
+
+    case 3:
+      updateFour(state)
+      break
   }
   lastState = _.clone(state)
   window.requestAnimationFrame(update)
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
   window.requestAnimationFrame(update)
-  $('#cactus').click(function() {
+  $('#cactus').click(function () {
     $(this).hide()
     state.level++
   })
+  $('#start').click(function () {
+    $(this).hide()
+    state.level++
+  })
+  $('#train').click(function () {
+    if (state.stop) {
+      return
+    }
+    state.stop = true
+    window.choo()
+  })
+  $('#check').click(function () {
+    // The third try will be correct.
+    state.tries++
+    if (state.tries === 3) {
+      state.level++
+      $('#pass').hide()
+    }
+  })
+  $('.cell').click(function () {
+    var text = $(this).text().trim()
+    if (text === '🦕') {
+      $('#solution').show()
+    }
+    else {
+      $('#feil').animate({
+        opacity: 1
+      }, 1300)
+      .animate({
+        opacity: 0
+      }, 1300)
+    }
+  })
+  window.choo = function () {
+    var $choo = $('#choo')
+    $choo.show()
+    .css({
+      fontSize: 'inherit',
+      opacity: 1
+    })
+    $choo.animate({
+      fontSize: '45px'
+    }, {
+      duration: 1000
+    })
+    .hide(300)
+    .show(10)
+    .animate({
+      opacity: 0
+    }, {
+      duration: 2000,
+      complete: function () {
+        $choo.hide()
+        state.choos++
+        state.stop = false
+        if (state.choos === 3) {
+          state.level++
+        }
+      }
+    })
+  }
 })
-module.exports = function() {}
+module.exports = function () {}

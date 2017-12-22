@@ -19,7 +19,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Kitchen organizing girl',
-      filename: './main.html',
+      filename: './index.html',
       hash: true,
       template: 'src/main.ejs'
     }),

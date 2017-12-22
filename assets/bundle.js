@@ -60,108 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-  
-var $ = __webpack_require__(1)
-var _ = __webpack_require__(2)
-__webpack_require__(3)
-function createState() {
-  return {
-    level: 0,
-    step: 0
-  }
-}
-var state = createState()
-
-var lastState = createState()
-
-function updateOne() {
-  // Move the cactus around randomly.
-  if (state.step % 50 === 0) {
-    var newY = Math.floor(Math.random() * (window.innerHeight * .8)) + 1;
-    var newX = Math.floor(Math.random() * (window.innerWidth * .8)) + 1;
-    $('#cactus').css({
-      left: newX,
-      top: newY
-    });
-  }
-}
-
-function updateTwo() {
-  // The train should drive around.
-  var $train = $('#train')
-  $train.show()
-  var direction = 0
-  var mod = state.step % 200
-  if (mod < 100) {
-    direction = 1;
-  }
-  var text = '🚃🚂'
-  if (direction) {
-    text = '🚂🚃'
-  }
-  $train.text(text)
-  var css = {
-    right: 'auto'
-  }
-  var prop = 'left'
-  if (direction) {
-    prop = 'right'
-    css['left'] = 'auto';
-  }
-  css[prop] = (mod % 100) * 0.9 + '%'
-  $train.css(css)
-}
-
-function updateHeading() {
-  var text = '';
-  switch (state.level) {
-    case 1:
-      text = 'Få toget til å ta en "choo choo" pause 3 ganger'
-      break;
-
-  }
-  $('#instructions').text(text)
-}
-
-function update() {
-  state.step++;
-  // Check if we should update level description.
-  if (state.level != lastState.level) {
-    updateHeading();
-  }
-  switch (state.level) {
-    case 0:
-      updateOne();
-      break
-
-    case 1:
-      updateTwo()
-      break;
-  }
-  lastState = _.clone(state)
-  window.requestAnimationFrame(update)
-}
-
-$(document).ready(function() {
-  window.requestAnimationFrame(update)
-  $('#cactus').click(function() {
-    $(this).hide()
-    state.level++
-  })
-})
-module.exports = function() {}
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10421,6 +10324,161 @@ return jQuery;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(0)
+var _ = __webpack_require__(2)
+__webpack_require__(3)
+function createState () {
+  return {
+    level: -1,
+    step: 0,
+    stop: false,
+    tries: 0,
+    choos: 0,
+    override: !new RegExp(/silje/).test(window.location.href)
+  }
+}
+window.cheat = function () {
+  state.level++
+}
+var state = createState()
+
+var lastState = createState()
+
+const updateOne = __webpack_require__(4)
+const updateStart = __webpack_require__(5)
+const updateThree = __webpack_require__(6)
+const updateTwo = __webpack_require__(7)
+const updateFour = __webpack_require__(8)
+
+function updateHeading () {
+  var text = ''
+  switch (state.level) {
+    case 0:
+      text = 'Gi en kaktus kos!'
+      break
+
+    case 1:
+      text = 'Få toget til å ta en "choo choo" pause 3 ganger'
+      break
+
+    case 2:
+      text = 'Gjett det hemmelige passordet'
+      break
+
+    case 3:
+      text = 'Finn den riktige knappen'
+      break
+  }
+  $('#instructions').text(text)
+}
+
+function update () {
+  state.step++
+  // Check if we should update level description.
+  if (state.level !== lastState.level) {
+    updateHeading()
+  }
+  switch (state.level) {
+    case -1:
+      updateStart(state)
+      break
+    case 0:
+      updateOne(state)
+      break
+
+    case 1:
+      updateTwo(state)
+      break
+
+    case 2:
+      updateThree()
+      break
+
+    case 3:
+      updateFour(state)
+      break
+  }
+  lastState = _.clone(state)
+  window.requestAnimationFrame(update)
+}
+
+$(document).ready(function () {
+  window.requestAnimationFrame(update)
+  $('#cactus').click(function () {
+    $(this).hide()
+    state.level++
+  })
+  $('#start').click(function () {
+    $(this).hide()
+    state.level++
+  })
+  $('#train').click(function () {
+    if (state.stop) {
+      return
+    }
+    state.stop = true
+    window.choo()
+  })
+  $('#check').click(function () {
+    // The third try will be correct.
+    state.tries++
+    if (state.tries === 3) {
+      state.level++
+      $('#pass').hide()
+    }
+  })
+  $('.cell').click(function () {
+    var text = $(this).text().trim()
+    if (text === '🦕') {
+      $('#solution').show()
+    }
+    else {
+      $('#feil').animate({
+        opacity: 1
+      }, 1300)
+      .animate({
+        opacity: 0
+      }, 1300)
+    }
+  })
+  window.choo = function () {
+    var $choo = $('#choo')
+    $choo.show()
+    .css({
+      fontSize: 'inherit',
+      opacity: 1
+    })
+    $choo.animate({
+      fontSize: '45px'
+    }, {
+      duration: 1000
+    })
+    .hide(300)
+    .show(10)
+    .animate({
+      opacity: 0
+    }, {
+      duration: 2000,
+      complete: function () {
+        $choo.hide()
+        state.choos++
+        state.stop = false
+        if (state.choos === 3) {
+          state.level++
+        }
+      }
+    })
+  }
+})
+module.exports = function () {}
+
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11980,6 +12038,132 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const $ = __webpack_require__(0)
+
+function updateOne (state) {
+  $('#start').hide()
+  $('#cactus').show()
+  // Move the cactus around randomly.
+  if (state.step % 50 === 0) {
+    var newY = Math.floor(Math.random() * (window.innerHeight * 0.8)) + 1
+    var newX = Math.floor(Math.random() * (window.innerWidth * 0.8)) + 1
+    $('#cactus').css({
+      left: newX,
+      top: newY
+    })
+  }
+}
+
+module.exports = updateOne
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(0)
+
+function updateStart (state) {
+  if (!(new Date().getTime() > 1545616800000) && !state.override) {
+    return
+  }
+  $('.warning').hide()
+  $('#start').show()
+}
+
+module.exports = updateStart
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const $ = __webpack_require__(0)
+
+function updateThree () {
+  $('#train').hide()
+  $('#pass').show()
+}
+
+module.exports = updateThree
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const $ = __webpack_require__(0)
+
+function updateTwo (state) {
+  $('#cactus').hide()
+  if (state.stop) {
+    return
+  }
+  // The train should drive around.
+  var $train = $('#train')
+  $train.show()
+  var direction = 0
+  var mod = state.step % 200
+  if (mod < 100) {
+    direction = 1
+  }
+  var loco = '<span class="loco">🚂</span>'
+  var text = `🚃${loco}`
+  if (direction) {
+    text = `${loco}🚃`
+  }
+  $train.html(text)
+  var css = {
+    right: 'auto'
+  }
+  var prop = 'left'
+  if (direction) {
+    prop = 'right'
+    css['left'] = 'auto'
+    $train.find('.loco').css({
+      transform: 'scaleX(1)'
+    })
+  } else {
+    $train.find('.loco').css({
+      transform: 'scaleX(-1)'
+    })
+  }
+  css[prop] = (mod % 100) * 0.8 + '%'
+  $train.css(css)
+}
+
+module.exports = updateTwo
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const $ = __webpack_require__(0)
+const grid = [
+  [
+    '🦄', '😎', '🧛‍♀️', '🎩', '🍹'
+  ],
+  [
+    '🎲', '❤️', '👻', '🙀', '🧕'
+  ],
+  [
+    '👯‍♀️', '🦑', '🦕', '🍽', '🔥'
+  ]
+]
+
+function updateFour (state) {
+  $('#grid').show()
+  $('#pass').hide()
+}
+
+module.exports = updateFour
+
 
 /***/ })
 /******/ ]);
