@@ -1,4 +1,4 @@
-const $ = require('jquery')
+var $ = require('jquery')
 
 function updateThree () {
   $('#train').hide()

@@ -1,4 +1,4 @@
-const $ = require('jquery')
+var $ = require('jquery')
 
 function updateTwo (state) {
   $('#cactus').hide()

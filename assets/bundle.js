@@ -10349,11 +10349,11 @@ var state = createState()
 
 var lastState = createState()
 
-const updateOne = __webpack_require__(4)
-const updateStart = __webpack_require__(5)
-const updateThree = __webpack_require__(6)
-const updateTwo = __webpack_require__(7)
-const updateFour = __webpack_require__(8)
+var updateOne = __webpack_require__(4)
+var updateStart = __webpack_require__(5)
+var updateThree = __webpack_require__(6)
+var updateTwo = __webpack_require__(7)
+var updateFour = __webpack_require__(8)
 
 function updateHeading () {
   var text = ''
@@ -12043,7 +12043,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscor
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const $ = __webpack_require__(0)
+var $ = __webpack_require__(0)
 
 function updateOne (state) {
   $('#start').hide()
@@ -12085,7 +12085,7 @@ module.exports = updateStart
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const $ = __webpack_require__(0)
+var $ = __webpack_require__(0)
 
 function updateThree () {
   $('#train').hide()
@@ -12099,7 +12099,7 @@ module.exports = updateThree
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const $ = __webpack_require__(0)
+var $ = __webpack_require__(0)
 
 function updateTwo (state) {
   $('#cactus').hide()
@@ -12146,18 +12146,7 @@ module.exports = updateTwo
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const $ = __webpack_require__(0)
-const grid = [
-  [
-    '🦄', '😎', '🧛‍♀️', '🎩', '🍹'
-  ],
-  [
-    '🎲', '❤️', '👻', '🙀', '🧕'
-  ],
-  [
-    '👯‍♀️', '🦑', '🦕', '🍽', '🔥'
-  ]
-]
+var $ = __webpack_require__(0)
 
 function updateFour (state) {
   $('#grid').show()

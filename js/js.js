@@ -19,11 +19,11 @@ var state = createState()
 
 var lastState = createState()
 
-const updateOne = require('./levels/1')
-const updateStart = require('./levels/start')
-const updateThree = require('./levels/3')
-const updateTwo = require('./levels/2')
-const updateFour = require('./levels/4')
+var updateOne = require('./levels/1')
+var updateStart = require('./levels/start')
+var updateThree = require('./levels/3')
+var updateTwo = require('./levels/2')
+var updateFour = require('./levels/4')
 
 function updateHeading () {
   var text = ''
