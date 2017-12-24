@@ -15,7 +15,7 @@
     "webpack-dev-server": "^2.9.7"
   },
   "scripts": {
-    "start:dev": "webpack-dev-server --host 0.0.0.0 --allowed-hosts .localhost",
+    "start:dev": "webpack-dev-server --host 0.0.0.0 --allowed-hosts .localhost,.ngrok.io",
     "test": "standard",
     "build": "NODE_ENV=production webpack"
   },

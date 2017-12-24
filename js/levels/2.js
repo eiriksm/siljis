@@ -14,9 +14,9 @@ function updateTwo (state) {
     direction = 1
   }
   var loco = '<span class="loco">🚂</span>'
-  var text = `🚃${loco}`
+  var text = '🚃' + loco
   if (direction) {
-    text = `${loco}🚃`
+    text = loco + '🚃`'
   }
   $train.html(text)
   var css = {
